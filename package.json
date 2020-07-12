@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run build && webpack-dev-server --mode development",
-    "build": "npx webpack && cp public/* dist/",
+    "build": "npx webpack && cp public/* dist/ && cp -r src/assets dist/",
     "preinstall": "typesync || :",
     "tsc": "tsc --noEmit --skipLibCheck",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "xlsx": "^0.16.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.4",
