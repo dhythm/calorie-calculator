@@ -1,8 +1,19 @@
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+} from '@material-ui/core/';
 import React, { useState } from 'react';
 import XLSX from 'xlsx';
 
 const App: React.FunctionComponent = () => {
   const [data, setData] = useState(null);
+  const [searchText, setSearchText] = useState('');
 
   fetch('./assets/standard_tables_of_food_composition_in_japan.xlsx')
     .then((res) => {
@@ -60,7 +71,47 @@ const App: React.FunctionComponent = () => {
     .catch((err) => console.error(err));
 
   return (
-    <div className="App">{data ? <>Hello, world</> : <>Loading...</>}</div>
+    <div className="App">
+      <TextField
+        id="Search"
+        label="Search"
+        variant="outlined"
+        onChange={(e) => setSearchText(e.target.value)}
+        // onBlur={(e) => setSearchText(e.target.value)}
+      />
+
+      {!data && <>Loading...</>}
+
+      {data && !!searchText && (
+        <TableContainer component={Paper}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell align="right">Calories</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data
+                .filter((d) => {
+                  const re = new RegExp(searchText, 'i');
+                  return !!d.name.match(re);
+                })
+                .map((d) => {
+                  return (
+                    <TableRow key={d.name}>
+                      <TableCell component="th" scope="row">
+                        {d.name}
+                      </TableCell>
+                      <TableCell align="right">{d.cal}</TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </div>
   );
 };
 

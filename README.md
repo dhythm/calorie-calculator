@@ -30,4 +30,5 @@ npm install
 
 ```
 npm i xlsx
+npm i @material-ui/core
 ```
