@@ -14,6 +14,7 @@ import XLSX from 'xlsx';
 const App: React.FunctionComponent = () => {
   const [data, setData] = useState(null);
   const [searchText, setSearchText] = useState('');
+  const [weight, setWeight] = useState(null);
 
   fetch('./assets/standard_tables_of_food_composition_in_japan.xlsx')
     .then((res) => {
@@ -78,6 +79,13 @@ const App: React.FunctionComponent = () => {
         variant="outlined"
         onChange={(e) => setSearchText(e.target.value)}
         // onBlur={(e) => setSearchText(e.target.value)}
+      />
+      <TextField
+        id="weight"
+        label="Weight(g)"
+        variant="outlined"
+        onChange={(e) => setWeight(e.target.value)}
+        type="number"
       />
 
       {!data && <>Loading...</>}
