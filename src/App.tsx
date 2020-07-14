@@ -1,43 +1,9 @@
-import {
-  createStyles,
-  Grid,
-  IconButton,
-  makeStyles,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Theme,
-} from '@material-ui/core/';
-import { Clear as ClearIcon } from '@material-ui/icons/';
+import { Grid, TextField } from '@material-ui/core/';
 import React, { useEffect, useState } from 'react';
 import XLSX from 'xlsx';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-    },
-    margin: {
-      margin: theme.spacing(1),
-    },
-    paper: {
-      padding: theme.spacing(2),
-      textAlign: 'center',
-      color: theme.palette.text.secondary,
-    },
-    container: {
-      maxHeight: 440,
-    },
-    table: {
-      width: '100%',
-    },
-  }),
-);
+import ListedFoods from './components/ListedFoods';
+import SelectedFoods from './components/SelectedFoods';
+import { useStyles } from './styles';
 
 const App: React.FunctionComponent = () => {
   const classes = useStyles();
@@ -45,7 +11,7 @@ const App: React.FunctionComponent = () => {
   const [data, setData] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [weight, setWeight] = useState(100);
-  const [selectedFood, setSelectedFood] = useState([]);
+  const [selectedFoods, setSelectedFoods] = useState([]);
 
   useEffect(() => {
     fetch('./assets/standard_tables_of_food_composition_in_japan.xlsx')
@@ -131,98 +97,16 @@ const App: React.FunctionComponent = () => {
         </Grid>
       </Grid>
 
-      {!data && <>Loading...</>}
-
-      {data && !!searchText && (
-        <TableContainer className={classes.container} component={Paper}>
-          <Table
-            className={classes.table}
-            stickyHeader
-            aria-label="foods table"
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Calories (100g)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data
-                .filter((d) => {
-                  const re = new RegExp(searchText, 'i');
-                  return !!d.name.match(re);
-                })
-                .map((d) => {
-                  return (
-                    <TableRow
-                      key={d.name}
-                      hover
-                      onClick={(e) =>
-                        setSelectedFood((prev) =>
-                          prev.concat({
-                            name: d.name,
-                            cal: d.cal,
-                            gram: weight,
-                          }),
-                        )
-                      }
-                    >
-                      <TableCell component="th" scope="row">
-                        {d.name}
-                      </TableCell>
-                      <TableCell align="right">{d.cal}</TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-
-      {selectedFood.length > 0 && (
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="selected foods">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Calories (100g)</TableCell>
-                <TableCell align="right">Weight (g)</TableCell>
-                <TableCell align="right">Total</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {selectedFood.map((d, i) => {
-                return (
-                  <TableRow key={i}>
-                    <TableCell component="th" scope="row">
-                      {d.name}
-                    </TableCell>
-                    <TableCell align="right">{d.cal}</TableCell>
-                    <TableCell align="right">{d.gram}</TableCell>
-                    <TableCell align="right">
-                      {(d.cal * d.gram) / 100}
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        aria-label="delete"
-                        className={classes.margin}
-                        onClick={() =>
-                          setSelectedFood((prev) =>
-                            prev.filter((_, idx) => i !== idx),
-                          )
-                        }
-                      >
-                        <ClearIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <ListedFoods
+        listedFoods={data}
+        searchingText={searchText}
+        weight={weight}
+        setSelectedFoods={setSelectedFoods}
+      />
+      <SelectedFoods
+        selectedFoods={selectedFoods}
+        setSelectedFoods={setSelectedFoods}
+      />
     </div>
   );
 };
