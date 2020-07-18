@@ -86,47 +86,12 @@ const SelectedFoods: React.FunctionComponent<Props> = ({
           <Typography>Total</Typography>
           <Typography>
             {`${selectedFoods.reduce((acc, cur) => {
-              const sum = acc + cur.cal;
+              const sum = acc + (cur.cal * cur.gram) / 100;
               return sum;
             }, 0)}kcal`}
           </Typography>
         </Box>
       </Box>
-    </>
-  );
-
-  return (
-    <>
-      {selectedFoods.length > 0 &&
-        selectedFoods.map((v, i) => (
-          <Box
-            key={i}
-            display="flex"
-            flexDirection="row"
-            className={classes.paddingX}
-            alignItems="center"
-          >
-            <Box flexGrow={1}>
-              <Typography variant="caption">{v.name}</Typography>
-              <br />
-              <Typography variant="caption">
-                {(v.cal * v.gram) / 100}kcal
-              </Typography>
-              <Typography variant="caption"> ({v.gram}g)</Typography>
-            </Box>
-            <Box>
-              <IconButton
-                className={classes.padding0}
-                aria-label="delete"
-                onClick={() =>
-                  setSelectedFoods((prev) => prev.filter((_, idx) => i !== idx))
-                }
-              >
-                <ClearIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </Box>
-        ))}
     </>
   );
 };
