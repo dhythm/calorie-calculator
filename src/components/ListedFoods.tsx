@@ -1,14 +1,16 @@
 import {
+  Box,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
+  Typography,
 } from '@material-ui/core';
 import React from 'react';
 import { useStyles } from '../styles';
+import Empty from './Empty';
 import Loading from './Loading';
 
 interface Food {
@@ -31,8 +33,20 @@ const ListedFoods: React.FunctionComponent<Props> = ({
 }) => {
   const classes = useStyles();
 
+  if (!searchingText) {
+    return (
+      <Box className={classes.container}>
+        <Empty />
+      </Box>
+    );
+  }
+
   if (!listedFoods) {
-    return <Loading />;
+    return (
+      <Box className={classes.container}>
+        <Loading />
+      </Box>
+    );
   }
 
   return (
@@ -40,26 +54,29 @@ const ListedFoods: React.FunctionComponent<Props> = ({
       {!!searchingText && listedFoods && (
         <TableContainer className={classes.container} component={Paper}>
           <Table
+            size="small"
             className={classes.table}
             stickyHeader
             aria-label="foods table"
           >
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Calories (100g)</TableCell>
-              </TableRow>
-            </TableHead>
             <TableBody>
               {listedFoods
+                .map((d) => ({
+                  ...d,
+                  name: d.name
+                    .replace(/＜.*＞（.*）/g, '')
+                    .replace(/＜.*＞/g, '')
+                    .replace(/^.*［.*］[ 　]/g, '')
+                    .replace(/^[ 　]/g, ''),
+                }))
                 .filter((d) => {
                   const re = new RegExp(searchingText, 'i');
                   return !!d.name.match(re);
                 })
-                .map((d) => {
+                .map((d, i) => {
                   return (
                     <TableRow
-                      key={d.name}
+                      key={i}
                       hover
                       onClick={(e) =>
                         setSelectedFoods((prev) =>
@@ -71,10 +88,14 @@ const ListedFoods: React.FunctionComponent<Props> = ({
                         )
                       }
                     >
-                      <TableCell component="th" scope="row">
-                        {d.name}
+                      <TableCell scope="row">
+                        <Typography variant="caption">{d.name}</Typography>
                       </TableCell>
-                      <TableCell align="right">{d.cal}</TableCell>
+                      <TableCell align="right">
+                        <Typography variant="caption">
+                          {(d.cal * weight) / 100}
+                        </Typography>
+                      </TableCell>
                     </TableRow>
                   );
                 })}

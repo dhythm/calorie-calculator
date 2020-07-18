@@ -1,12 +1,13 @@
 import {
+  Box,
   IconButton,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
+  Typography,
 } from '@material-ui/core';
 import { Clear as ClearIcon } from '@material-ui/icons/';
 import React from 'react';
@@ -29,52 +30,103 @@ const SelectedFoods: React.FunctionComponent<Props> = ({
 }) => {
   const classes = useStyles();
 
+  if (selectedFoods.length === 0) {
+    return <></>;
+  }
+
   return (
     <>
-      {selectedFoods.length > 0 && (
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="selected foods">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Calories (100g)</TableCell>
-                <TableCell align="right">Weight (g)</TableCell>
-                <TableCell align="right">Total</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {selectedFoods.map((d, i) => {
-                return (
-                  <TableRow key={i}>
-                    <TableCell component="th" scope="row">
-                      {d.name}
-                    </TableCell>
-                    <TableCell align="right">{d.cal}</TableCell>
-                    <TableCell align="right">{d.gram}</TableCell>
-                    <TableCell align="right">
-                      {(d.cal * d.gram) / 100}
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        aria-label="delete"
-                        className={classes.margin}
-                        onClick={() =>
-                          setSelectedFoods((prev) =>
-                            prev.filter((_, idx) => i !== idx),
-                          )
-                        }
-                      >
-                        <ClearIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <Box paddingY="0.5em">
+        <Typography>Selected</Typography>
+      </Box>
+      <TableContainer className={classes.container} component={Paper}>
+        <Table
+          size="small"
+          className={classes.table}
+          stickyHeader
+          aria-label="selected foods"
+        >
+          <TableBody>
+            {selectedFoods.map((v, i) => {
+              return (
+                <TableRow key={i}>
+                  <TableCell scope="row">
+                    <Typography variant="caption">{v.name}</Typography>
+                  </TableCell>
+                  <TableCell className={classes.padding0} align="right">
+                    <Typography variant="caption">{`${
+                      (v.cal * v.gram) / 100
+                    }kcal`}</Typography>
+                    <br />
+                    <Typography variant="caption">{`
+                      (${v.gram}g)`}</Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      className={classes.padding0}
+                      aria-label="delete"
+                      onClick={() =>
+                        setSelectedFoods((prev) =>
+                          prev.filter((_, idx) => i !== idx),
+                        )
+                      }
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Box paddingY="1em">
+        <Box display="flex" flexDirection="row" justifyContent="space-between">
+          <Typography>Total</Typography>
+          <Typography>
+            {`${selectedFoods.reduce((acc, cur) => {
+              const sum = acc + cur.cal;
+              return sum;
+            }, 0)}kcal`}
+          </Typography>
+        </Box>
+      </Box>
+    </>
+  );
+
+  return (
+    <>
+      {selectedFoods.length > 0 &&
+        selectedFoods.map((v, i) => (
+          <Box
+            key={i}
+            display="flex"
+            flexDirection="row"
+            className={classes.paddingX}
+            alignItems="center"
+          >
+            <Box flexGrow={1}>
+              <Typography variant="caption">{v.name}</Typography>
+              <br />
+              <Typography variant="caption">
+                {(v.cal * v.gram) / 100}kcal
+              </Typography>
+              <Typography variant="caption"> ({v.gram}g)</Typography>
+            </Box>
+            <Box>
+              <IconButton
+                className={classes.padding0}
+                aria-label="delete"
+                onClick={() =>
+                  setSelectedFoods((prev) => prev.filter((_, idx) => i !== idx))
+                }
+              >
+                <ClearIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Box>
+        ))}
     </>
   );
 };

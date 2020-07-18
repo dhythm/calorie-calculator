@@ -72,7 +72,7 @@ const App: React.FunctionComponent = () => {
 
   return (
     <div className="App">
-      <Grid container spacing={1}>
+      <Grid container spacing={1} className={classes.padding}>
         <Grid item xs={8}>
           <TextField
             id="Search"
@@ -90,23 +90,28 @@ const App: React.FunctionComponent = () => {
             label="Weight (g)"
             variant="outlined"
             value={weight}
-            onChange={(e) => setWeight(Number(e.target.value))}
+            onChange={(e) => setWeight(Number(e.target.value) || 0)}
             inputMode="numeric"
             fullWidth
           />
         </Grid>
-      </Grid>
 
-      <ListedFoods
-        listedFoods={data}
-        searchingText={searchText}
-        weight={weight}
-        setSelectedFoods={setSelectedFoods}
-      />
-      <SelectedFoods
-        selectedFoods={selectedFoods}
-        setSelectedFoods={setSelectedFoods}
-      />
+        <Grid item xs={12}>
+          <ListedFoods
+            listedFoods={data}
+            searchingText={searchText}
+            weight={weight}
+            setSelectedFoods={setSelectedFoods}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <SelectedFoods
+            selectedFoods={selectedFoods}
+            setSelectedFoods={setSelectedFoods}
+          />
+        </Grid>
+      </Grid>
     </div>
   );
 };

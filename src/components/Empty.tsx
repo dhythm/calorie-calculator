@@ -1,9 +1,9 @@
 import { Box } from '@material-ui/core';
 import React from 'react';
 import Lottie from 'react-lottie';
-import animationData from '../assets/loading-circle.json';
+import animationData from '../assets/social-fever.json';
 
-const Loading: React.FunctionComponent = () => {
+const Empty: React.FunctionComponent = () => {
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -19,4 +19,4 @@ const Loading: React.FunctionComponent = () => {
   );
 };
 
-export default Loading;
+export default Empty;
